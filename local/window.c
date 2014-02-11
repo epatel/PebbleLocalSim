@@ -1,5 +1,11 @@
 #include "globals.h"
 
+#ifdef __APPLE__
+extern bool g_is_fullscreen; // This will be supplied by the resCompiler generated globals.auto.c
+#else
+#define g_is_fullscreen true // Not yet implemented for WIN32 and LINUX.
+#endif
+
 Window* window_create (void) {
     Window* window=(Window*)malloc(sizeof(Window));
     if (!window) {
@@ -11,9 +17,9 @@ Window* window_create (void) {
         free(window);
         return 0;
     }
-    window->is_fullscreen=true; //TODO: copy appinfo.json to output and read if app is watchface or watchapp
+    window->is_fullscreen=g_is_fullscreen;
     window->is_loaded=false;
-    window->background_color=GColorBlack;
+    window->background_color=GColorWhite;
     window->user_data=0;
     window->click_config_context=0;
     window->status_bar_icon=0;
@@ -23,6 +29,7 @@ Window* window_create (void) {
     window->window_handlers.unload=0;
     window->window_handlers.appear=0;
     window->window_handlers.disappear=0;
+    window_set_fullscreen(window, window->is_fullscreen);
     return window;
 }
 
@@ -49,10 +56,13 @@ void window_set_background_color(Window *window, GColor background_color) {
 void window_set_fullscreen(Window *window, bool enabled) {
     window->is_fullscreen = enabled;
 
-    if (enabled==true)
+    if (enabled) {
         window->layer->bounds.origin.y=0;
-    else
+        window->layer->bounds.size.h=168;
+    } else {
         window->layer->bounds.origin.y=16;
+        window->layer->bounds.size.h=168-16;
+    }
 }
 
 void window_deinit(Window *window) {

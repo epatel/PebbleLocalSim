@@ -29,10 +29,10 @@ struct SystemFont {
     int lsize;
 };
 struct SystemFont systemFonts [SYSTEM_FONT_COUNT]= {
-    {0,FONT_KEY_GOTHIC_14,"./simdata/systemFonts/gothic.ttf",8,14},
-    {0,FONT_KEY_GOTHIC_14_BOLD,"./simdata/systemFonts/gothic-bold.ttf",8,14}, // 1 bold
-    {0,FONT_KEY_GOTHIC_18,"./simdata/systemFonts/gothic.ttf",10,18},
-    {0,FONT_KEY_GOTHIC_18_BOLD,"./simdata/systemFonts/gothic-bold.ttf",10,18}, // 3 bold
+    {0,FONT_KEY_GOTHIC_14,"./simdata/systemFonts/gothic.ttf",10,14},
+    {0,FONT_KEY_GOTHIC_14_BOLD,"./simdata/systemFonts/gothic-bold.ttf",10,14}, // 1 bold
+    {0,FONT_KEY_GOTHIC_18,"./simdata/systemFonts/gothic.ttf",12,18},
+    {0,FONT_KEY_GOTHIC_18_BOLD,"./simdata/systemFonts/gothic-bold.ttf",12,18}, // 3 bold
     {0,FONT_KEY_GOTHIC_24,"./simdata/systemFonts/gothic.ttf",14,24},
     {0,FONT_KEY_GOTHIC_24_BOLD,"./simdata/systemFonts/gothic-bold.ttf",14,24}, // 5 bold
     {0,FONT_KEY_GOTHIC_28,"./simdata/systemFonts/gothic.ttf",18,28},
@@ -54,7 +54,7 @@ int lineHeightFromFont(GFont font) {
     if (systemFonts[i].font == font) 
       return systemFonts[i].lsize;
   }
-  return 18;
+  return TTF_FontHeight(font)+1;
 }
 
 void unloadSystemFonts() {
@@ -109,7 +109,7 @@ GFont fonts_load_custom_font(ResHandle res) {
     }
     fclose(f);
     strcat(name,"_f");
-    TTF_Font* font=TTF_OpenFont (name,height);
+    TTF_Font* font=TTF_OpenFont(name,height-1);
     if (!font) {
         printf ("[WARN] Couldn't load custom font (\"%s\",%d,%s)!\n",name,height,TTF_GetError());
         return 0;

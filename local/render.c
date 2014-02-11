@@ -136,14 +136,14 @@ void pushLayer (Layer* l) {
         SDL_SetClipRect (renderList[renderListSize].clipScreen,&rect);
     }
     renderListSize++;
-    topOffset.x+=l->bounds.origin.x+l->frame.origin.x;
-    topOffset.y+=l->bounds.origin.y+l->frame.origin.y;
+    topOffset.x+=l->frame.origin.x;
+    topOffset.y+=l->frame.origin.y;
 }
 
 void popLayer () {
     Layer* l=renderList[renderListSize-1].layer;
-    topOffset.x-=l->bounds.origin.x+l->frame.origin.x;
-    topOffset.y-=l->bounds.origin.y+l->frame.origin.y;
+    topOffset.x-=l->frame.origin.x;
+    topOffset.y-=l->frame.origin.y;
     popScreen ();
     SDL_Surface* src=getTopScreen ();
     renderListSize--;
@@ -180,10 +180,9 @@ void renderLayer (Layer* l,GContext* ctx) {
 
 void window_render (Window* w,GContext* ctx)
 {
-    Layer* cursor;
-    if (w!=0) {
-        SDL_FillRect(getTopScreen(),0,getRawColor (w->background_color));
-        cursor=w->layer;
+    if (w) {
+        SDL_FillRect(getTopScreen(), 0, getRawColor(w->background_color));
+        Layer* cursor = w->layer;
         while (cursor!=0) {
             renderLayer(cursor,ctx);
             cursor=cursor->next_sibling;
@@ -195,13 +194,18 @@ bool render () {
     SDL_Rect src,dst;
     if (isDirty==true) {
         SDL_FillRect(getTopScreen(),0,r_black);
-        window_render(window_stack_get_top_window (),app_get_current_graphics_context());
+        window_render(window_stack_get_top_window(), app_get_current_graphics_context());
         //Render status bar
         if (statusBarVisible) {
             dst=(SDL_Rect){0,0,144,16};
             SDL_FillRect (getTopScreen (),&dst,r_black);
             if (statusBarIconSize>0) {
-                graphics_draw_bitmap_in_rect (app_get_current_graphics_context(),statusBarIcon[statusBarIconSize-1],GRect(8-statusBarIcon[statusBarIconSize-1]->bounds.size.w/2,8-statusBarIcon[statusBarIconSize-1]->bounds.size.h/2,statusBarIcon[statusBarIconSize-1]->bounds.size.w,statusBarIcon[statusBarIconSize-1]->bounds.size.h));
+	        graphics_draw_bitmap_in_rect(app_get_current_graphics_context(),
+					     statusBarIcon[statusBarIconSize-1],
+					     GRect(8-statusBarIcon[statusBarIconSize-1]->bounds.size.w/2,
+						   8-statusBarIcon[statusBarIconSize-1]->bounds.size.h/2,
+						   statusBarIcon[statusBarIconSize-1]->bounds.size.w,
+						   statusBarIcon[statusBarIconSize-1]->bounds.size.h));
             }
             else {
                 src=(SDL_Rect){0,0,16,16};
@@ -213,9 +217,14 @@ bool render () {
             SDL_BlitSurface(statusImg,&src,getTopScreen(),&dst);
             clock_copy_time_string(statusTimeBuffer,STATUS_TIME_BUFFER_SIZE);
             graphics_context_set_text_color (app_get_current_graphics_context(),GColorWhite);
-            graphics_draw_text (app_get_current_graphics_context(),statusTimeBuffer,statusTimeFont,GRect(0,0,144,16),GTextOverflowModeTrailingEllipsis,GTextAlignmentCenter,0);
+            graphics_draw_text(app_get_current_graphics_context(),
+			       statusTimeBuffer,
+			       statusTimeFont,
+			       GRect(0,-2,144,16),
+			       GTextOverflowModeTrailingEllipsis,
+			       GTextAlignmentCenter,
+			       0);
         }
-
         isDirty=false;
         return true;
     }

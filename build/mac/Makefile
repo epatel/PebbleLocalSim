@@ -5,10 +5,16 @@ SIM_SRCS = \
 	../../SDL_gfx/SDL_gfxBlitFunc.c \
 	../../SDL_gfx/SDL_gfxPrimitives.c \
 	../../SDL_gfx/SDL_rotozoom.c \
+	../../local/accel_tap.c \
 	../../local/actionbar.c \
 	../../local/animation.c \
+	../../local/app_message.c \
+	../../local/app_sync.c \
+	../../local/battery.c \
 	../../local/bitmap.c \
+	../../local/bluetooth.c \
 	../../local/buttons.c \
+	../../local/dictionary.c \
 	../../local/draw.c \
 	../../local/font.c \
 	../../local/hardwareOutput.c \
@@ -17,15 +23,12 @@ SIM_SRCS = \
 	../../local/main.c \
 	../../local/math.c \
 	../../local/pebble_os.c \
+	../../local/persistent_storage.c \
 	../../local/render.c \
 	../../local/scrolllayer.c \
 	../../local/simdata.c \
 	../../local/timer.c \
-	../../local/window.c \
-	../../local/bluetooth.c \
-	../../local/battery.c \
-	../../local/accel_tap.c \
-	../../local/persistent_storage.c \
+	../../local/window.c
 
 INCS = \
 	-I../../include \

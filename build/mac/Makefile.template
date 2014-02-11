@@ -1,5 +1,5 @@
 
-APP_SRCS = $(wildcard ../src/*.c)
+APP_SRCS = $(wildcard ../src/*.c) src/globals.auto.c
 
 INCS = -Iinclude -Ibuild/tempLocal -I. -I../src
 

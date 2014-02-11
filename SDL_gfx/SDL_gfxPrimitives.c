@@ -6495,7 +6495,7 @@ void _murphyIteration(SDL_gfxMurphyIterator *m, Uint8 miter,
 	int ftmp1, ftmp2;
 	Uint16 m1x, m1y, m2x, m2y;	
 	Uint16 fix, fiy, lax, lay, curx, cury;
-	Uint16 px[4], py[4];
+	Sint16 px[4], py[4];
 	SDL_gfxBresenhamIterator b;
 
 	if (miter > 1) {

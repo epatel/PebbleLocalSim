@@ -161,10 +161,10 @@ Tuple * dict_read_first(DictionaryIterator *iter) {
 
 DictionaryResult dict_serialize_tuplets(DictionarySerializeCallback callback,
                                         void *context,
-                                        const uint8_t tuplets_count,
-                                        const Tuplet * const tuplets) {
+                                        const Tuplet * const tuplets,
+					const uint8_t tuplets_count) {
 
-    const uint32_t size = dict_calc_buffer_size_from_tuplets(tuplets_count, tuplets);
+    const uint32_t size = dict_calc_buffer_size_from_tuplets(tuplets, tuplets_count);
     uint8_t* buffer = (uint8_t*) malloc(size);
 
     DictionaryIterator iter;
@@ -183,22 +183,21 @@ DictionaryResult dict_serialize_tuplets(DictionarySerializeCallback callback,
     return DICT_OK;
 }
 
-DictionaryResult dict_serialize_tuplets_to_buffer(const uint8_t tuplets_count,
-                                                  const Tuplet * const tuplets,
-                                                  uint8_t *buffer,
-                                                  uint32_t *size_in_out) {
-
+DictionaryResult dict_serialize_tuplets_to_buffer(const Tuplet * const tuplets,
+						  const uint8_t tuplets_count,
+						  uint8_t *buffer,
+						  uint32_t *size_in_out) {
     DictionaryIterator iter;
-    return dict_serialize_tuplets_to_buffer_with_iter(tuplets_count, tuplets, &iter, buffer, size_in_out);
+    return dict_serialize_tuplets_to_buffer_with_iter(&iter, tuplets, tuplets_count, buffer, size_in_out);
 }
 
-DictionaryResult dict_serialize_tuplets_to_buffer_with_iter(const uint8_t tuplets_count,
-                                                            const Tuplet * const tuplets,
-                                                            DictionaryIterator *iter,
+DictionaryResult dict_serialize_tuplets_to_buffer_with_iter(DictionaryIterator *iter,
+							    const Tuplet * const tuplets,
+                                                            const uint8_t tuplets_count,
                                                             uint8_t *buffer,
                                                             uint32_t *size_in_out) {
 
-    const uint32_t size = dict_calc_buffer_size_from_tuplets(tuplets_count, tuplets);
+    const uint32_t size = dict_calc_buffer_size_from_tuplets(tuplets, tuplets_count);
     if (size > *size_in_out)
         return DICT_NOT_ENOUGH_STORAGE;
     *size_in_out = size;
@@ -231,7 +230,7 @@ DictionaryResult dict_write_tuplet(DictionaryIterator *iter, const Tuplet * cons
     return DICT_INVALID_ARGS;
 }
 
-uint32_t dict_calc_buffer_size_from_tuplets(const uint8_t tuplets_count, const Tuplet * const tuplets) {
+uint32_t dict_calc_buffer_size_from_tuplets(const Tuplet * const tuplets, const uint8_t tuplets_count) {
     uint32_t uiSize = 1 + (tuplets_count * 7);
 
     for (int i = 0; i < tuplets_count; ++i) {
